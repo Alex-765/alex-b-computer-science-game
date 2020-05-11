@@ -253,19 +253,19 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . 2 . . . 
+. . . . . . . . . . . . 2 2 . . 
+. . . . . . . . . . . . 2 2 2 . 
+8 8 8 8 8 8 8 8 8 8 8 8 8 8 2 2 
+. . . . . . . . . . . . 2 2 2 . 
+. . . . . . . . . . . . 2 2 . . 
+. . . . . . . . . . . . 2 . . . 
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-`, Player_1, 50, 100)
+`, Player_1, 200, 0)
 })
 scene.onOverlapTile(SpriteKind.Player, myTiles.tile6, function (sprite, location) {
     game.over(false, effects.melt)
@@ -273,6 +273,10 @@ scene.onOverlapTile(SpriteKind.Player, myTiles.tile6, function (sprite, location
 sprites.onOverlap(SpriteKind.Enemy, SpriteKind.Player, function (sprite, otherSprite) {
     Points = 0
     game.over(false, effects.melt)
+})
+sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
+    Points += 1
+    otherSprite.destroy()
 })
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (Player_1.vy == 0) {
@@ -285,6 +289,8 @@ scene.onOverlapTile(SpriteKind.Player, myTiles.tile11, function (sprite, locatio
 scene.onOverlapTile(SpriteKind.Player, myTiles.tile10, function (sprite, location) {
     game.over(true, effects.confetti)
 })
+let Enemy_2: Sprite = null
+let Enemy_1: Sprite = null
 let Points = 0
 let BLAST: Sprite = null
 let Player_1: Sprite = null
@@ -331,25 +337,7 @@ tiles.setTilemap(tiles.createTilemap(
             TileScale.Sixteen
         ))
 Player_1.ay = 450
-let Enemy_1 = sprites.create(img`
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . e e e e e . . . . . . 
-. . . . e e e e e e e . . . . . 
-. . . e 1 1 1 e 1 1 1 e . . . . 
-. . e e 1 f 1 e 1 f 1 e e . . . 
-. e e e 1 1 1 e 1 1 1 e e e . . 
-e e e e e e e e e e e e e e e . 
-. e e e e e e e e e e e e e . . 
-. . e e 1 e e e e e 1 e e . . . 
-. . . e 1 f f f f f 1 e . . . . 
-. . . . e e e e e e e . . . . . 
-. . . . . e e e e e . . . . . . 
-. . . . . e e e e e . . . . . . 
-. . . . . e . . . e . . . . . . 
-. . . . e e . . . e e . . . . . 
-`, SpriteKind.Enemy)
-Enemy_1.setPosition(Math.randomRange(100, 300), Math.randomRange(0, 10))
+scene.cameraFollowSprite(Player_1)
 let Gold = sprites.create(img`
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
@@ -368,8 +356,27 @@ let Gold = sprites.create(img`
 . . . . . 5 5 5 5 5 . . . . . . 
 . . . . . . 5 5 5 . . . . . . . 
 . . . . . . . 5 . . . . . . . . 
-`, SpriteKind.Player)
-let Enemy_2 = sprites.create(img`
+`, SpriteKind.Food)
+game.onUpdateInterval(2000, function () {
+    Enemy_1 = sprites.create(img`
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . e e e e e . . . . . . 
+. . . . e e e e e e e . . . . . 
+. . . e 1 1 1 e 1 1 1 e . . . . 
+. . e e 1 f 1 e 1 f 1 e e . . . 
+. e e e 1 1 1 e 1 1 1 e e e . . 
+e e e e e e e e e e e e e e e . 
+. e e e e e e e e e e e e e . . 
+. . e e 1 e e e e e 1 e e . . . 
+. . . e 1 f f f f f 1 e . . . . 
+. . . . e e e e e e e . . . . . 
+. . . . . e e e e e . . . . . . 
+. . . . . e e e e e . . . . . . 
+. . . . . e . . . e . . . . . . 
+. . . . e e . . . e e . . . . . 
+`, SpriteKind.Enemy)
+    Enemy_2 = sprites.create(img`
 . . . . . . . . . . . . . . . . 
 . . . . . . . 1 1 1 . . . . . . 
 . . . . . . . 1 1 1 . . . . . . 
@@ -387,9 +394,10 @@ let Enemy_2 = sprites.create(img`
 . . . 1 . 1 . 1 . 1 . 1 . 1 . . 
 . . . . . . . . . . . . . . . . 
 `, SpriteKind.Enemy)
-Enemy_2.setPosition(Math.randomRange(100, 300), Math.randomRange(0, 10))
-Enemy_1.ay = 200
-Enemy_2.ay = 200
-Enemy_1.follow(Player_1, 50)
-Enemy_2.follow(Player_1, 50)
-scene.cameraFollowSprite(Player_1)
+    Enemy_1.ay = 450
+    Enemy_2.ay = 450
+    Enemy_1.setPosition(1000, 0)
+    Enemy_2.setPosition(500, 0)
+    Enemy_1.follow(Player_1, 30)
+    Enemy_2.follow(Player_1, 30)
+})
