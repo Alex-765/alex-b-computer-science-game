@@ -375,7 +375,6 @@ scene.onOverlapTile(SpriteKind.Player, myTiles.tile10, function (sprite, locatio
 })
 function Start_Level () {
     Enemy_Life = 0
-    info.setScore(0)
     Enemy_1 = sprites.create(img`
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
@@ -912,9 +911,9 @@ e e e e e e e e e e e e e e e .
 `)
         Player_1.ay = 450
         Enemy_1.ay = 450
-        Player_1.setPosition(2, 10)
+        Player_1.setPosition(2, 60)
         Enemy_1.setPosition(700, 0)
-        Enemy_2.setPosition(100, 125)
+        Enemy_2.setPosition(125, 125)
         Enemy_3.setPosition(600, 0)
         Enemy_4.setPosition(650, 0)
         Enemy_1.ay = 450
